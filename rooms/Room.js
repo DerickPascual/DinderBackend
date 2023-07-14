@@ -1,9 +1,16 @@
 class Room {
-    constructor(roomId, initialMember) {
+    constructor(roomId, initialMember, restaurants) {
         this.roomId = roomId;
-        this.members = [initialMember];
-        this.restaurants = []
-        this.likes = {}
+        this.restaurants = restaurants;
+        this.likesAndDislikesTemplate = [];
+    
+        for (let i = 0; i < this.restaurants.length; i++) {
+            this.likesAndDislikesTemplate.push({ likes: 0, dislikes: 0});
+        }
+
+        this.members = {};
+        this.members[initialMember] = JSON.parse(JSON.stringify(this.likesAndDislikesTemplate));
+        this.likesAndDislikes = JSON.parse(JSON.stringify(this.likesAndDislikesTemplate));
     }
 
     getRoomId() {
@@ -11,19 +18,25 @@ class Room {
     }
 
     addMember(member) {
-        this.members = [...this.members, member];
+        this.members[member] = JSON.parse(JSON.stringify(this.likesAndDislikesTemplate));
     }
 
     getMembers() {
         return this.members;
     }
 
+    addMemberLike(member, index) {
+        this.members[member][index].likes++;
+        this.likesAndDislikes[index].likes++;
+    }
+
+    addMemberDislike(member, index) {
+        this.members[member][index].dislikes++;
+        this.likesAndDislikes[index].dislikes++;
+    }
+
     setRestaurants(restaurants) {
         this.restaurants = restaurants;
-
-        for (const restaurant of this.restaurants) {
-            this.likes[restaurant] = 0;
-        }
 
         return this.restaurants;
     }
@@ -33,15 +46,15 @@ class Room {
     }
 
     addLike(restaurant) {
-        this.likes[restaurant]++;
+        this.likesAndDislikes[restaurant]++;
 
-        if (this.likes[restaurant] === this.members.length) {
+        if (this.likesAndDislikes[restaurant] === this.members.length) {
             return "match";
         }
     }
 
     getLikes() {
-        return this.likes;
+        return this.likesAndDislikes;
     }
 }
 

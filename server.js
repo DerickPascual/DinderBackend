@@ -36,6 +36,7 @@ app.post('/api/check-room-id', (req, res) => {
 });
 
 const Rooms = {};
+const socketRooms = {};
 
 const mockRestaurants = require('./mock_restaurants/restauraunts');
 
@@ -43,6 +44,11 @@ io.on("connection", (socket) => {
     console.log("A socket has connected");
 
     socket.on("join_room", (roomId) => {
+        if (!roomId) {
+            socket.emit("restauraunts", []);
+            return;
+        }
+
         roomId = roomId.toUpperCase();
 
         if (roomExists(io, roomId)) {
@@ -56,7 +62,7 @@ io.on("connection", (socket) => {
         } else {
             console.log(`A socket is creating a room ${roomId}`);
 
-            Rooms[roomId] = new Room(roomId, socket.id);
+            Rooms[roomId] = new Room(roomId, socket.id, mockRestaurants);
             socket.join(roomId);
 
             // add restauraunts
@@ -65,14 +71,35 @@ io.on("connection", (socket) => {
             console.log(`Socket successfully started room ${roomId}`);
         }
 
+        socketRooms[socket.id] = roomId;
         socket.emit("restaurants", Rooms[roomId].restaurants);
 
         // disconnect the socket from its connection room
         io.in(socket.id).socketsLeave(socket.id);
     });
 
+    socket.on('swipe', (index, direction) => {
+        const socketRoomId = socketRooms[socket.id];
+
+        if (!socketRoomId) return;
+
+        const socketRoom = Rooms[socketRoomId];
+
+        if (direction === "right") {
+            socketRoom.addMemberLike(socket.id, index);
+        } else if (direction === "left") {
+            socketRoom.addMemberDislike(socket.id, index);
+        }
+
+        // add undo functionality
+    });
+
     socket.on('disconnect', () => {
         console.log("A socket has disconnected.");
+
+        // do we delete a socket's likes in a room on disconnect?
+
+        delete socketRooms[socket.id];
         
         // sync the Rooms list with server rooms on deletion
         const serverRooms = io.sockets.adapter.rooms;
