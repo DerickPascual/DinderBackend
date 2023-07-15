@@ -60,49 +60,49 @@ const restaurants = [
         numberRatings: 1238
     },
     {
-        name: '10',
+        name: 'The Steakhouse',
         imgUrl: './RedRobin.jpg',
         ratingValue: 4.7,
         numberRatings: 92
     },
     {
-        name: '11',
+        name: 'Taco Express',
         imgUrl: './RedRobin.jpg',
         ratingValue: 4.8,
         numberRatings: 1340
     },
     {
-        name: '12',
+        name: 'Burger Palace',
         imgUrl: './RedRobin.jpg',
         ratingValue: 4.4,
         numberRatings: 1238
     },
     {
-        name: '13',
+        name: 'Sushi Haven',
         imgUrl: './RedRobin.jpg',
         ratingValue: 4.7,
         numberRatings: 92
     },
     {
-        name: '14',
+        name: 'The Pizzeria',
         imgUrl: './RedRobin.jpg',
         ratingValue: 4.8,
         numberRatings: 1340
     },
     {
-        name: '15',
+        name: 'Spice Fusion',
         imgUrl: './RedRobin.jpg',
         ratingValue: 4.4,
         numberRatings: 1238
     },
     {
-        name: '16',
+        name: 'Bella Italia',
         imgUrl: './RedRobin.jpg',
         ratingValue: 4.7,
         numberRatings: 92
     },
     {
-        name: '17',
+        name: 'The Hungry Elephant',
         imgUrl: './RedRobin.jpg',
         ratingValue: 4.8,
         numberRatings: 1340

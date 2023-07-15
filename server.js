@@ -91,8 +91,20 @@ io.on("connection", (socket) => {
             socketRoom.addMemberDislike(socket.id, index);
         }
 
-        // add undo functionality
+        const updatedLikesAndDislikes = socketRoom.likesAndDislikes;
+
+        io.in(socketRoomId).emit('likes_and_dislikes', updatedLikesAndDislikes);
     });
+
+    socket.on('undo', (index) => {
+        const socketRoomId = socketRooms[socket.id];
+        const socketRoom = Rooms[socketRoomId];
+        socketRoom.undoMemberSwipe(socket.id, index);
+
+        const updatedLikesAndDislikes = socketRoom.likesAndDislikes;
+
+        io.in(socketRoomId).emit('likes_and_dislikes', updatedLikesAndDislikes);
+    })
 
     socket.on('disconnect', () => {
         console.log("A socket has disconnected.");

@@ -35,6 +35,18 @@ class Room {
         this.likesAndDislikes[index].dislikes++;
     }
 
+    undoMemberSwipe(member, index) {
+        const memberLikeOrDislike = this.members[member][index];
+
+        if (memberLikeOrDislike.likes > 0) {
+            memberLikeOrDislike.likes = 0;
+            this.likesAndDislikes[index].likes--;
+        } else if (memberLikeOrDislike.dislikes > 0) {
+            memberLikeOrDislike.dislikes = 0;
+            this.likesAndDislikes[index].dislikes--;
+        }
+    }
+
     setRestaurants(restaurants) {
         this.restaurants = restaurants;
 
