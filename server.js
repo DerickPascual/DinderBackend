@@ -93,6 +93,15 @@ io.on("connection", (socket) => {
 
         const updatedLikesAndDislikes = socketRoom.likesAndDislikes;
 
+        const swipedRestaurantLikesAndDislikes = socketRoom.likesAndDislikes[index].likes;
+        const numMembersInRoom = Object.keys(socketRoom.members).length;
+
+        if (numMembersInRoom !== 1 && swipedRestaurantLikesAndDislikes === numMembersInRoom) {
+            const restaurant = socketRoom.restaurants[index];
+
+            io.in(socketRoomId).emit("match_found", restaurant);
+        }
+
         io.in(socketRoomId).emit('likes_and_dislikes', updatedLikesAndDislikes);
     });
 
