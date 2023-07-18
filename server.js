@@ -1,7 +1,7 @@
 const express = require('express');
 const { createServer } = require('http');
 const { Server } = require("socket.io");
-const { listRooms, createRoomId, roomExists } = require('./rooms/rooms');
+const { listRooms, createRoomId, roomExists } = require('./rooms/roomsManager');
 const Room = require('./rooms/Room');
 
 const app = express();
