@@ -1,7 +1,6 @@
 const restaurants = [
     {
         name: 'Biggie Hub',
-        imgUrl: './RedRobin.jpg',
         address: "48 Pirrama Rd, Pyrmont NSW 2009, Australia",
         hours: [
             "Monday: 9:00 AM – 5:00 PM",
@@ -57,11 +56,22 @@ const restaurants = [
             }
         ],
         numberRatings: 1238,
-        url: "https://maps.google.com/?cid=10281119596374313554"
+        url: "https://maps.google.com/?cid=10281119596374313554",
+        photoUrls: [
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+        ]
     },
     {
         name: 'Jungle Kingdom',
-        imgUrl: './RedRobin.jpg',
         address: "48 Pirrama Rd, Pyrmont NSW 2009, Australia",
         hours: [
             "Monday: 9:00 AM – 5:00 PM",
@@ -117,7 +127,19 @@ const restaurants = [
             }
         ],
         numberRatings: 1238,
-        url: "https://maps.google.com/?cid=10281119596374313554"
+        url: "https://maps.google.com/?cid=10281119596374313554",
+        photoUrls: [
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+        ]
     }, {
         name: 'The Spot',
         imgUrl: './RedRobin.jpg',
@@ -136,7 +158,19 @@ const restaurants = [
         reviews: [
         ],
         numberRatings: 1238,
-        url: "https://maps.google.com/?cid=10281119596374313554"
+        url: "https://maps.google.com/?cid=10281119596374313554",
+        photoUrls: [
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+        ]
     }, {
         name: 'Let us Eat',
         imgUrl: './RedRobin.jpg',
@@ -195,7 +229,19 @@ const restaurants = [
             }
         ],
         numberRatings: 1238,
-        url: "https://maps.google.com/?cid=10281119596374313554"
+        url: "https://maps.google.com/?cid=10281119596374313554",
+        photoUrls: [
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+        ]
     }, {
         name: 'Food Place',
         imgUrl: './RedRobin.jpg',
@@ -254,7 +300,19 @@ const restaurants = [
             }
         ],
         numberRatings: 1238,
-        url: "https://maps.google.com/?cid=10281119596374313554"
+        url: "https://maps.google.com/?cid=10281119596374313554",
+        photoUrls: [
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+        ]
     }, {
         name: 'Hungry Cow',
         imgUrl: './RedRobin.jpg',
@@ -313,7 +371,19 @@ const restaurants = [
             }
         ],
         numberRatings: 1238,
-        url: "https://maps.google.com/?cid=10281119596374313554"
+        url: "https://maps.google.com/?cid=10281119596374313554",
+        photoUrls: [
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+        ]
     }, {
         name: 'Yummy Grill',
         imgUrl: './RedRobin.jpg',
@@ -372,7 +442,19 @@ const restaurants = [
             }
         ],
         numberRatings: 1238,
-        url: "https://maps.google.com/?cid=10281119596374313554"
+        url: "https://maps.google.com/?cid=10281119596374313554",
+        photoUrls: [
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+            "../../images/RedRobin.jpg",
+        ]
     }, 
 ]
 
