@@ -83,8 +83,8 @@ const getInitialRestaurants = async (lat, lng, radius) => {
 
     const requestParams = {
         location: `${lat},${lng}`,
+        type: "restaurant",
         radius: radiusInMeters,
-        keyword: "restaurant",
         opennow: true,
         key: process.env.GOOGLE_PLACES_API_KEY
     }
@@ -98,6 +98,8 @@ const getInitialRestaurants = async (lat, lng, radius) => {
         params: requestParams
     }).then(async (response) => {
         const results = response.data.results;
+        console.log(results.length);
+
         nextPageToken = response.data.next_page_token;
 
         addResultsToRestaurantsArr(results, restaurants);
