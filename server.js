@@ -3,6 +3,7 @@ const { createServer } = require('http');
 const { Server } = require("socket.io");
 const { listRooms, createRoomId, roomExists } = require('./rooms/roomsManager');
 const Room = require('./rooms/Room');
+const { getInitialRestaurants } = require('./restaurants/restaurantsManager');
 
 const app = express();
 const cors = require('cors');
@@ -38,12 +39,10 @@ app.post('/api/check-room-id', (req, res) => {
 const Rooms = {};
 const socketRooms = {};
 
-const mockRestaurants = require('./mock_restaurants/restauraunts');
-
 io.on("connection", (socket) => {
     console.log("A socket has connected");
 
-    socket.on("join_room", (roomId) => {
+    socket.on("join_room", async (roomId, latitude, longitude, radius) => {
         if (!roomId) {
             socket.emit("restauraunts", []);
             return;
@@ -62,11 +61,15 @@ io.on("connection", (socket) => {
         } else {
             console.log(`A socket is creating a room ${roomId}`);
 
-            Rooms[roomId] = new Room(roomId, socket.id, mockRestaurants);
-            socket.join(roomId);
-
             // add restauraunts
-            Rooms[roomId].setRestaurants(mockRestaurants);
+            console.log("Requesting initial restaurants.")
+            const restaurantsObj = await getInitialRestaurants(latitude, longitude, radius);
+            const restaurants = restaurantsObj.restaurants;
+            console.log("Initial restaurants received.")
+
+            Rooms[roomId] = new Room(roomId, socket.id, restaurants);
+
+            socket.join(roomId);
 
             console.log(`Socket successfully started room ${roomId}`);
         }
