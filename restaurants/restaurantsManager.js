@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { Client } = require("@googlemaps/google-maps-services-js");
 const Restaurant = require('./Restaurant.js');
+const { setTimeout } = require("timers/promises");
 
 const client = new Client({});
 
@@ -90,8 +91,6 @@ const getInitialRestaurants = async (lat, lng, radius) => {
     }
 
     const restaurants = [];
-
-    let returnObj;
     let nextPageToken = null;
 
     await client.placesNearby({
@@ -110,8 +109,41 @@ const getInitialRestaurants = async (lat, lng, radius) => {
         console.log(error);
     });
 
-    returnObj = { restaurants: restaurants, nextPageToken: nextPageToken };
+    const returnObj = { restaurants: restaurants, nextPageToken: nextPageToken };
     return returnObj;
 }
 
-module.exports = { getInitialRestaurants };
+const getAdditionalRestaurants = async (pageToken) => {
+    await setTimeout(3000);
+
+    if (!pageToken) {
+        return;
+    }
+
+    const requestParams = {
+        pagetoken: pageToken,
+        key: process.env.GOOGLE_PLACES_API_KEY
+    }
+
+    const restaurants = [];
+    let nextPageToken = null;
+
+    await client.placesNearby({
+        params: requestParams
+    }).then(async (response) => {
+        const results = response.data.results;
+
+        nextPageToken = response.data.next_page_token;
+
+        addResultsToRestaurantsArr(results, restaurants);
+
+        await addDetailsToRestaurants(restaurants);
+    }).catch((err) => {
+        console.log(err);
+    });
+
+    const returnObj = { restaurants: restaurants, nextPageToken: nextPageToken };
+    return returnObj;
+}
+
+module.exports = { getInitialRestaurants, getAdditionalRestaurants };

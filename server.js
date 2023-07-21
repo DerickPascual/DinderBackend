@@ -3,7 +3,7 @@ const { createServer } = require('http');
 const { Server } = require("socket.io");
 const { listRooms, createRoomId, roomExists } = require('./rooms/roomsManager');
 const Room = require('./rooms/Room');
-const { getInitialRestaurants } = require('./restaurants/restaurantsManager');
+const { getInitialRestaurants, getAdditionalRestaurants } = require('./restaurants/restaurantsManager');
 
 const app = express();
 const cors = require('cors');
@@ -64,8 +64,19 @@ io.on("connection", (socket) => {
             // add restauraunts
             console.log("Requesting initial restaurants.")
             const restaurantsObj = await getInitialRestaurants(latitude, longitude, radius);
-            const restaurants = restaurantsObj.restaurants;
-            console.log("Initial restaurants received.")
+            const initialRestaurants = restaurantsObj.restaurants;
+            console.log("Initial restaurants received.");
+            socket.emit("initial_load_finished");
+
+            const nextPageToken = restaurantsObj.nextPageToken;
+
+            let restaurants;
+            if (nextPageToken) {
+                const moreRestaurantsObj = await getAdditionalRestaurants(nextPageToken);
+                restaurants = [...moreRestaurantsObj.restaurants, ...initialRestaurants];
+            } else {
+                restaurants = initialRestaurants;
+            }
 
             Rooms[roomId] = new Room(roomId, socket.id, restaurants);
 
@@ -116,12 +127,24 @@ io.on("connection", (socket) => {
         const updatedLikesAndDislikes = socketRoom.likesAndDislikes;
 
         io.in(socketRoomId).emit('likes_and_dislikes', updatedLikesAndDislikes);
-    })
+    });
+
+    /* Buggy implementation of lazy loading restaurants. Needs further development if decided to be implemented.
+    socket.on('get_additional_restaurants', async () => {
+        const socketRoomId = socketRooms[socket.id];
+        const pageToken = Rooms[socketRoomId].nextPageToken;
+
+        const restaurantsObj = await getAdditionalRestaurants(pageToken);
+
+        const additionalRestaurants = restaurantsObj.restaurants;
+
+        console.log(additionalRestaurants);
+
+        io.in(socketRoomId).emit('additional_restaurants', additionalRestaurants);
+    });*/
 
     socket.on('disconnect', () => {
         console.log("A socket has disconnected.");
-
-        // do we delete a socket's likes in a room on disconnect?
 
         delete socketRooms[socket.id];
         

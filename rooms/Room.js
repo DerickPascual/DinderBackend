@@ -11,6 +11,7 @@ class Room {
         this.members = {};
         this.members[initialMember] = JSON.parse(JSON.stringify(this.likesAndDislikesTemplate));
         this.likesAndDislikes = JSON.parse(JSON.stringify(this.likesAndDislikesTemplate));
+        this.nextPageToken = null;
     }
 
     getRoomId() {
