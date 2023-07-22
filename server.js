@@ -1,9 +1,9 @@
 const express = require('express');
 const { createServer } = require('http');
 const { Server } = require("socket.io");
-const { listRooms, createRoomId, roomExists } = require('./rooms/roomsManager');
-const Room = require('./rooms/Room');
-const { getInitialRestaurants, getAdditionalRestaurants } = require('./restaurants/restaurantsManager');
+const { listRooms, createRoomId, roomExists } = require('./roomsManager');
+const Room = require('./classes/Room');
+const { getInitialRestaurants, getAdditionalRestaurants } = require('./googleApiRestaurantsManager');
 
 const app = express();
 const cors = require('cors');
@@ -57,26 +57,30 @@ io.on("connection", (socket) => {
             Rooms[roomId].addMember(socket.id);
 
             console.log(`Socket successfully joined ${roomId}`);
-            console.log(`Room Members: ${Rooms[roomId].getMembers()}`);
         } else {
             console.log(`A socket is creating a room ${roomId}`);
 
             // add restauraunts
-            console.log("Requesting initial restaurants.")
             const restaurantsObj = await getInitialRestaurants(latitude, longitude, radius);
             const initialRestaurants = restaurantsObj.restaurants;
-            console.log("Initial restaurants received.");
+
             socket.emit("initial_load_finished");
 
             const nextPageToken = restaurantsObj.nextPageToken;
 
+            /* Logic that would be implemented if the restaurants per room was 40.
+            Currently not implemented due to api cost. 
             let restaurants;
             if (nextPageToken) {
                 const moreRestaurantsObj = await getAdditionalRestaurants(nextPageToken);
                 restaurants = [...moreRestaurantsObj.restaurants, ...initialRestaurants];
             } else {
                 restaurants = initialRestaurants;
-            }
+            } 
+            */
+
+            // comment this out if implementing above
+            const restaurants = initialRestaurants;
 
             Rooms[roomId] = new Room(roomId, socket.id, restaurants);
 
@@ -107,15 +111,16 @@ io.on("connection", (socket) => {
 
         const updatedLikesAndDislikes = socketRoom.likesAndDislikes;
 
+        // logic to determine if a match was found. If swiped restaurant has the same number of likes as members in the room => match.
         const swipedRestaurantLikesAndDislikes = socketRoom.likesAndDislikes[index].likes;
         const numMembersInRoom = Object.keys(socketRoom.members).length;
-
         if (numMembersInRoom !== 1 && swipedRestaurantLikesAndDislikes === numMembersInRoom) {
             const restaurant = socketRoom.restaurants[index];
 
             io.in(socketRoomId).emit("match_found", restaurant);
         }
 
+        // emitting updated likes and dislikes to all sockets in the room for voting modal
         io.in(socketRoomId).emit('likes_and_dislikes', updatedLikesAndDislikes);
     });
 
@@ -128,20 +133,6 @@ io.on("connection", (socket) => {
 
         io.in(socketRoomId).emit('likes_and_dislikes', updatedLikesAndDislikes);
     });
-
-    /* Buggy implementation of lazy loading restaurants. Needs further development if decided to be implemented.
-    socket.on('get_additional_restaurants', async () => {
-        const socketRoomId = socketRooms[socket.id];
-        const pageToken = Rooms[socketRoomId].nextPageToken;
-
-        const restaurantsObj = await getAdditionalRestaurants(pageToken);
-
-        const additionalRestaurants = restaurantsObj.restaurants;
-
-        console.log(additionalRestaurants);
-
-        io.in(socketRoomId).emit('additional_restaurants', additionalRestaurants);
-    });*/
 
     socket.on('disconnect', () => {
         console.log("A socket has disconnected.");
@@ -156,8 +147,6 @@ io.on("connection", (socket) => {
             }
         }
     });
-
-    // io.disconnectSockets();
 });
 
 httpServer.on("error", (err) => {

@@ -8,7 +8,11 @@ class Restaurant {
         this.priceLevel = priceLevel;
         this.numberRatings = numberRatings;
 
-        // retrieved with PlaceDetails
+        // retrieved/edited with PlaceDetails
+        if (!description || !url || !address) {
+            this.hasDetails = false;
+        }
+
         this.description=description
         this.url = url;
         this.hours = hours;
