@@ -3,7 +3,7 @@ const { createServer } = require('http');
 const { Server } = require("socket.io");
 const { listRooms, createRoomId, roomExists } = require('./roomsManager');
 const Room = require('./classes/Room');
-const { getInitialRestaurants, getAdditionalRestaurants } = require('./googleApiRestaurantsManager');
+const { getInitialRestaurants, getAdditionalRestaurants, getRestaurants } = require('./googleApiRestaurantsManager');
 
 const app = express();
 const cors = require('cors');
@@ -61,27 +61,9 @@ io.on("connection", (socket) => {
             console.log(`A socket is creating a room ${roomId}`);
 
             // add restauraunts
-            const restaurantsObj = await getInitialRestaurants(latitude, longitude, radius);
-            const initialRestaurants = restaurantsObj.restaurants;
-
-            socket.emit("initial_load_finished");
-
-            const nextPageToken = restaurantsObj.nextPageToken;
-
-            /* Logic that would be implemented if the restaurants per room was 40.
-            Currently not implemented due to api cost. 
-            let restaurants;
-            if (nextPageToken) {
-                const moreRestaurantsObj = await getAdditionalRestaurants(nextPageToken);
-                restaurants = [...moreRestaurantsObj.restaurants, ...initialRestaurants];
-            } else {
-                restaurants = initialRestaurants;
-            } 
-            */
-
-            // comment this out if implementing above
-            const restaurants = initialRestaurants;
-
+            const restaurantsObj = await getRestaurants(latitude, longitude, radius);
+            const restaurants = restaurantsObj.restaurants;
+            
             Rooms[roomId] = new Room(roomId, socket.id, restaurants);
 
             socket.join(roomId);

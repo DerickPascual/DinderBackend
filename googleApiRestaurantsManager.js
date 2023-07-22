@@ -8,7 +8,31 @@ const client = new Client({});
 const getRestaurantsFromResults = (results) => {
     const restaurants = []
 
+    // for filtering out fast food restaurants
+    const chainCount = [
+        { name: "Starbucks", count: "0"  },
+        { name: "Mcdonalds", count: "0" },
+        { name: "Subway", count: "0" },
+        { name: "Olive Garden", count: "0" }
+    ]
+
     for (const restaurant of results) {
+
+        let repeatChainFound = false;
+        for (const chain of chainCount) {
+            if (restaurant.name.toUpperCase().includes(chain.name.toUpperCase())) {
+                if (chain.count >= 1) {
+                    repeatChainFound = true;
+                } else {
+                    chain.count++;
+                }
+            }
+        }
+
+        if (repeatChainFound) {
+            continue;
+        }
+
         const newRestaurant = new Restaurant(
             restaurant.place_id,
             restaurant.name,
@@ -92,6 +116,82 @@ const addDetailsToRestaurants = async (restaurants) => {
     }
 };
 
+const getInitialResults = async (lat, lng, radius) => {
+    const radiusInMeters = radius * 1609.34;
+
+    const requestParams = {
+        location: `${lat},${lng}`,
+        type: "restaurant",
+        radius: radiusInMeters,
+        opennow: true,
+        key: process.env.GOOGLE_PLACES_API_KEY
+    }
+
+    let results;
+    let nextPageToken = null;
+
+    await client.placesNearby({
+        params: requestParams
+    }).then(async (response) => {
+        results = response.data.results;
+
+        nextPageToken = response.data.next_page_token;
+    }).catch((error) => {
+        console.log(error);
+    });
+
+    const returnObj = { results: results, nextPageToken: nextPageToken };
+    return returnObj;
+}
+
+const getAdditionalResults = async (pageToken) => {
+    if (!pageToken) {
+        return;
+    }
+
+    const requestParams = {
+        pagetoken: pageToken,
+        key: process.env.GOOGLE_PLACES_API_KEY
+    }
+
+    let results;
+    let nextPageToken = null;
+
+    await client.placesNearby({
+        params: requestParams
+    }).then(async (response) => {
+        results = response.data.results;
+
+        nextPageToken = response.data.next_page_token;
+
+    }).catch((err) => {
+        console.log(err);
+    });
+
+    const returnObj = { results: results, nextPageToken: nextPageToken };
+    return returnObj;
+}
+
+const getRestaurants = async (lat, lng, radius) => {
+    const initialResults = await getInitialResults(lat, lng, radius);
+
+    let additionalResults = { results: [], nextPageToken: null }
+
+    /* Uncomment for 40 restaurants
+    if (initialResults.nextPageToken) {
+        await setTimeout(3000);
+        additionalResults = await getAdditionalResults(initialResults.nextPageToken);
+    }
+    */
+
+    const restaurants = getRestaurantsFromResults([...initialResults.results, ...additionalResults.results]);
+
+    await addDetailsToRestaurants(restaurants);
+
+    return { restaurants: restaurants, nextPageToken: additionalResults.nextPageToken }
+}
+
+// OLD METHODS
 const getInitialRestaurants = async (lat, lng, radius) => {
 
     const radiusInMeters = radius * 1609.34;
@@ -111,14 +211,12 @@ const getInitialRestaurants = async (lat, lng, radius) => {
         params: requestParams
     }).then(async (response) => {
         const results = response.data.results;
-        console.log(results.length);
 
         nextPageToken = response.data.next_page_token;
 
         restaurants = getRestaurantsFromResults(results);
 
         await addDetailsToRestaurants(restaurants);
-
     }).catch((error) => {
         console.log(error);
     });
@@ -149,7 +247,7 @@ const getAdditionalRestaurants = async (pageToken) => {
 
         nextPageToken = response.data.next_page_token;
 
-        restaurants = getRestaurantsFromResults(results, restaurants);
+        restaurants = getRestaurantsFromResults(results);
 
         await addDetailsToRestaurants(restaurants);
     }).catch((err) => {
@@ -160,4 +258,4 @@ const getAdditionalRestaurants = async (pageToken) => {
     return returnObj;
 }
 
-module.exports = { getInitialRestaurants, getAdditionalRestaurants };
+module.exports = { getInitialRestaurants, getAdditionalRestaurants, getRestaurants };
