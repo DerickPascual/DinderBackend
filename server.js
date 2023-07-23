@@ -11,10 +11,14 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
     cors: {
         // add localhost for development
-        origin: 'https://poetic-smakager-73e06e.netlify.app',
-        methods: ['GET', 'POST']
+        origin: '*',
     }
 });
+
+app.use(cors({
+    // add localhost for development
+    origin: 'https://poetic-smakager-73e06e.netlify.app'
+}));
 
 app.use(express.json());
 
