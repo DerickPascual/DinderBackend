@@ -87,7 +87,7 @@ const addDetailsToRestaurant = async (restaurant) => {
             for (const photo of restaurantDetails.photos) {
                 if (photoCount >= 5) break;
 
-                restaurant.photoUrls.push(`https://maps.googleapis.com/maps/api/place/photo?photo_reference=${photo.photo_reference}&key=${process.env.GOOGLE_PLACES_API_KEY}&maxwidth=1600&maxheight=1600`);
+                restaurant.photoUrls.push(`https://maps.googleapis.com/maps/api/place/photo?photo_reference=${photo.photo_reference}&key=${process.env.CLIENT_SIDE_GOOGLE_PLACES_API_KEY}&maxwidth=1600&maxheight=1600`);
                 photoCount++;
             }
         }
