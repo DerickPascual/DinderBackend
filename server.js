@@ -16,11 +16,6 @@ const io = new Server(httpServer, {
     }
 });
 
-app.use(cors({
-    // add localhost for development
-    origin: 'https://poetic-smakager-73e06e.netlify.app'
-}));
-
 app.use(express.json());
 
 app.get('/api/new-room-id', (req, res) => {
