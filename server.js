@@ -10,12 +10,16 @@ const cors = require('cors');
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
     cors: {
-        origin: 'http://localhost:3000',
+        // add localhost for development
+        origin: 'https://poetic-smakager-73e06e.netlify.app/',
         methods: ['GET', 'POST']
     }
 });
 
-app.use(cors());
+app.use(cors({
+    // add localhost for development
+    origin: 'https://poetic-smakager-73e06e.netlify.app/'
+}));
 
 app.use(express.json());
 
