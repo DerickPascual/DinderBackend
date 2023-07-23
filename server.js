@@ -6,6 +6,12 @@ const { getInitialRestaurants, getAdditionalRestaurants, getRestaurants } = requ
 
 const app = express();
 const cors = require('cors');
+
+app.use(cors({
+    // add localhost for development
+    origin: 'https://poetic-smakager-73e06e.netlify.app'
+}));
+
 const httpServer = createServer(app);
 const io = require('socket.io')(httpServer, {
     cors: {
@@ -14,11 +20,6 @@ const io = require('socket.io')(httpServer, {
         methods: ['GET', 'POST']
     }
 });
-
-app.use(cors({
-    // add localhost for development
-    origin: 'https://poetic-smakager-73e06e.netlify.app'
-}));
 
 app.use(express.json());
 
