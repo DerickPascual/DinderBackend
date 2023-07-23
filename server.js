@@ -1,25 +1,25 @@
 const express = require('express');
 const { createServer } = require('http');
+const { Server } = require("socket.io");
 const { listRooms, createRoomId, roomExists } = require('./roomsManager');
 const Room = require('./classes/Room');
 const { getInitialRestaurants, getAdditionalRestaurants, getRestaurants } = require('./googleApiRestaurantsManager');
 
 const app = express();
 const cors = require('cors');
-
-app.use(cors({
-    // add localhost for development
-    origin: 'https://poetic-smakager-73e06e.netlify.app'
-}));
-
 const httpServer = createServer(app);
-const io = require('socket.io')(httpServer, {
+const io = new Server(httpServer, {
     cors: {
         // add localhost for development
         origin: 'https://poetic-smakager-73e06e.netlify.app',
         methods: ['GET', 'POST']
     }
 });
+
+app.use(cors({
+    // add localhost for development
+    origin: 'https://poetic-smakager-73e06e.netlify.app'
+}));
 
 app.use(express.json());
 
