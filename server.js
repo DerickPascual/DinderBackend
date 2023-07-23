@@ -139,6 +139,6 @@ httpServer.on("error", (err) => {
     console.log("Error opening server");
 });
 
-httpServer.listen(3500, () => {
+httpServer.listen(process.env.PORT || 3500, () => {
     console.log("Server listening on port 3500");
 });
