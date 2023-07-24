@@ -12,14 +12,14 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
     cors: {
         // add localhost for development
-        origin: process.env.NODE_ENV === 'production' ? 'letsdiner.com' : 'http://localhost:3000',
+        origin: process.env.NODE_ENV === 'production' ? 'https://letsdiner.com' : 'http://localhost:3000',
         methods: ['GET', 'POST']
     }
 });
 
 app.use(cors({
     // add localhost for development
-    origin: process.env.NODE_ENV === 'production' ? 'letsdiner.com' : 'http://localhost:3000'
+    origin: process.env.NODE_ENV === 'production' ? 'https://letsdiner.com' : 'http://localhost:3000'
 }));
 
 app.use(express.json());
