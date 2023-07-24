@@ -1,5 +1,5 @@
 class Restaurant {
-    constructor(placeId, name, ratingValue, priceLevel, numberRatings, description="", url="", address="", hours=[], reviews=[], photoUrls=[]) {
+    constructor(placeId, name, ratingValue, priceLevel, numberRatings, description="", url="", address="", hours=[], reviews=[], photos=[]) {
         // retrieved with PlacesSearch
         this.placeId = placeId;
         this.name = name;
@@ -17,7 +17,7 @@ class Restaurant {
         this.url = url;
         this.hours = hours;
         this.reviews = reviews;
-        this.photoUrls = photoUrls;
+        this.photos = photos;
     }
 }
 

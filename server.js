@@ -5,6 +5,7 @@ const { Server } = require("socket.io");
 const { listRooms, createRoomId, roomExists } = require('./roomsManager');
 const Room = require('./classes/Room');
 const { getInitialRestaurants, getAdditionalRestaurants, getRestaurants } = require('./googleApiRestaurantsManager');
+const { setTimeout } = require("timers/promises");
 
 const app = express();
 const cors = require('cors');
@@ -61,6 +62,12 @@ io.on("connection", (socket) => {
             socket.join(roomId);
             Rooms[roomId].addMember(socket.id);
 
+            if (!Rooms[roomId].restaurantsHaveDetails) {
+                await setTimeout(1000);
+            }
+
+            socket.emit("existing_room_restaurants", Rooms[roomId].restaurants)
+
             console.log(`Socket successfully joined ${roomId}`);
         } else {
             console.log(`A socket is creating a room ${roomId}`);
@@ -73,15 +80,24 @@ io.on("connection", (socket) => {
 
             socket.join(roomId);
 
+            socket.emit("new_room_restaurants", Rooms[roomId].restaurants);
+
             console.log(`Socket successfully started room ${roomId}`);
         }
 
         socketRooms[socket.id] = roomId;
-        socket.emit("restaurants", Rooms[roomId].restaurants);
 
         // disconnect the socket from its connection room
         io.in(socket.id).socketsLeave(socket.id);
     });
+
+    socket.on("new_room_restaurants_with_details", (restaurants) => {
+        const socketRoomId = socketRooms[socket.id];
+        const socketRoom = Rooms[socketRoomId];
+
+        socketRoom.restaurantsHaveDetails = true;
+        socketRoom.setRestaurants(restaurants);
+    })
 
     socket.on('swipe', (index, direction) => {
         const socketRoomId = socketRooms[socket.id];

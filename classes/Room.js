@@ -10,6 +10,7 @@ class Room {
     constructor(roomId, initialMember, restaurants) {
         this.roomId = roomId;
         this.restaurants = shuffleArray(restaurants);
+        this.restaurantsHaveDetails = false;
         this.likesAndDislikesTemplate = [];
     
         for (let i = 0; i < this.restaurants.length; i++) {
