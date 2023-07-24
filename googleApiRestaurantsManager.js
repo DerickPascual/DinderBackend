@@ -86,7 +86,7 @@ const getAdditionalResults = async (pageToken) => {
         key: process.env.GOOGLE_PLACES_API_KEY
     }
 
-    let results;
+    let results = [];
     let nextPageToken = null;
 
     await client.placesNearby({
@@ -105,16 +105,18 @@ const getAdditionalResults = async (pageToken) => {
 }
 
 const getRestaurants = async (lat, lng, radius) => {
-    const initialResults = await getInitialResults(lat, lng, radius);
+    if (!lat || !lng || !radius) {
+        return { restaurants: [], nextPageToken: null };
+    }
+
+    let initialResults = await getInitialResults(lat, lng, radius);
 
     let additionalResults = { results: [], nextPageToken: null }
 
-    /* Uncomment for 40 restaurants
     if (initialResults.nextPageToken) {
         await setTimeout(3000);
         additionalResults = await getAdditionalResults(initialResults.nextPageToken);
     }
-    */
 
     const restaurants = getRestaurantsFromResults([...initialResults.results, ...additionalResults.results]);
 
