@@ -140,6 +140,11 @@ io.on("connection", (socket) => {
     socket.on('disconnect', () => {
         console.log("A socket has disconnected.");
 
+        const roomId = socketRooms[socket.id];
+        const socketRoom = Rooms[roomId];
+
+        delete socketRoom.members[socket.id];
+
         delete socketRooms[socket.id];
         
         // sync the Rooms list with server rooms on deletion
