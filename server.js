@@ -75,12 +75,13 @@ io.on("connection", (socket) => {
             // add restauraunts
             const restaurantsObj = await getRestaurants(latitude, longitude, radius);
             const restaurants = restaurantsObj.restaurants;
+            const queryLimitHit = restaurantsObj.queryLimitHit;
             
             Rooms[roomId] = new Room(roomId, socket.id, restaurants);
 
             socket.join(roomId);
 
-            socket.emit("new_room_restaurants", Rooms[roomId].restaurants);
+            socket.emit("new_room_restaurants", Rooms[roomId].restaurants, queryLimitHit);
 
             console.log(`Socket successfully started room ${roomId}`);
         }
@@ -143,7 +144,7 @@ io.on("connection", (socket) => {
         const roomId = socketRooms[socket.id];
         const socketRoom = Rooms[roomId];
 
-        delete socketRoom.members[socket.id];
+        if (socketRoom) delete socketRoom.members[socket.id];
 
         delete socketRooms[socket.id];
         

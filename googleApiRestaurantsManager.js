@@ -59,8 +59,9 @@ const getInitialResults = async (lat, lng, radius) => {
         key: process.env.GOOGLE_PLACES_API_KEY
     }
 
-    let results;
+    let results = [];
     let nextPageToken = null;
+    let queryLimitHit = false;
 
     await client.placesNearby({
         params: requestParams
@@ -68,11 +69,15 @@ const getInitialResults = async (lat, lng, radius) => {
         results = response.data.results;
 
         nextPageToken = response.data.next_page_token;
-    }).catch((error) => {
-        console.log(error);
+    }).catch((err) => {
+        console.log(err);
+
+        if (err.response.data.status === 'OVER_QUERY_LIMIT') {
+            queryLimitHit = true;
+        }
     });
 
-    const returnObj = { results: results, nextPageToken: nextPageToken };
+    const returnObj = { results: results, nextPageToken: nextPageToken, queryLimitHit: queryLimitHit };
     return returnObj;
 }
 
@@ -86,8 +91,10 @@ const getAdditionalResults = async (pageToken) => {
         key: process.env.GOOGLE_PLACES_API_KEY
     }
 
+    let returnObj;
     let results = [];
     let nextPageToken = null;
+    let queryLimitHit = false;
 
     await client.placesNearby({
         params: requestParams
@@ -98,9 +105,13 @@ const getAdditionalResults = async (pageToken) => {
 
     }).catch((err) => {
         console.log(err);
+
+        if (err.response.data.status = 'OVER_QUERY_LIMIT') {
+            queryLimitHit = true;
+        }
     });
 
-    const returnObj = { results: results, nextPageToken: nextPageToken };
+    returnObj = { results: results, nextPageToken: nextPageToken, queryLimitHit: queryLimitHit };
     return returnObj;
 }
 
@@ -111,6 +122,10 @@ const getRestaurants = async (lat, lng, radius) => {
 
     let initialResults = await getInitialResults(lat, lng, radius);
 
+    if (initialResults.queryLimitHit) {
+        return { restaurants: [], nextPageToken: null, queryLimitHit: true }
+    }
+
     let additionalResults = { results: [], nextPageToken: null }
 
     if (initialResults.nextPageToken) {
@@ -118,9 +133,13 @@ const getRestaurants = async (lat, lng, radius) => {
         additionalResults = await getAdditionalResults(initialResults.nextPageToken);
     }
 
+    if (additionalResults.queryLimitHit) {
+        return { restaurants: [], nextPageToken: null, queryLimitHit: true }
+    }
+
     const restaurants = getRestaurantsFromResults([...initialResults.results, ...additionalResults.results]);
 
-    return { restaurants: restaurants, nextPageToken: additionalResults.nextPageToken }
+    return { restaurants: restaurants, nextPageToken: additionalResults.nextPageToken, queryLimitHit: false }
 }
 
 module.exports = { getRestaurants };
